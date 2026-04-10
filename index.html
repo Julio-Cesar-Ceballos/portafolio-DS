@@ -1,1 +1,1052 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Science Portfolio — Julio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #07090f;
+  --bg2:       #0d1117;
+  --bg3:       #111827;
+  --border:    rgba(255,255,255,0.07);
+  --accent:    #00e5a0;
+  --accent2:   #3b82f6;
+  --accent3:   #f59e0b;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --mono:      'IBM Plex Mono', monospace;
+  --sans:      'Syne', sans-serif;
+  --serif:     'Lora', serif;
+}
 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── Custom cursor ── */
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed; pointer-events: none;
+  z-index: 9999; transform: translate(-50%,-50%);
+  transition: transform .1s, width .2s, height .2s;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  position: fixed; pointer-events: none;
+  z-index: 9998; transform: translate(-50%,-50%);
+  transition: all .18s ease;
+  opacity: .5;
+}
+
+/* ── Grid noise overlay ── */
+body::before {
+  content:'';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: .025; pointer-events: none; z-index: 0;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 48px;
+  background: rgba(7,9,15,.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: var(--mono); font-size: 13px;
+  color: var(--accent); letter-spacing: 2px;
+}
+.nav-links { display: flex; gap: 32px; }
+.nav-links a {
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--accent); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: flex-start;
+  padding: 0 10vw;
+  position: relative; overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0,229,160,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,160,.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,229,160,.12) 0%, transparent 70%);
+  top: -100px; right: -100px; pointer-events: none;
+}
+.hero-tag {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 4px;
+  color: var(--accent); text-transform: uppercase; margin-bottom: 20px;
+  opacity: 0; animation: fadeUp .6s .2s forwards;
+}
+.hero h1 {
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 800; line-height: .95;
+  letter-spacing: -3px;
+  opacity: 0; animation: fadeUp .7s .35s forwards;
+}
+.hero h1 span { 
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--accent);
+}
+.hero-desc {
+  font-family: var(--serif); font-style: italic;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--muted); max-width: 520px; margin-top: 24px; line-height: 1.7;
+  opacity: 0; animation: fadeUp .7s .5s forwards;
+}
+.hero-chips {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px;
+  opacity: 0; animation: fadeUp .7s .65s forwards;
+}
+.chip {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+  padding: 6px 14px; border-radius: 3px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  color: var(--muted);
+  transition: all .2s;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,.06); }
+.chip.accent { border-color: rgba(0,229,160,.3); color: var(--accent); background: rgba(0,229,160,.08); }
+
+.hero-cta {
+  display: flex; gap: 16px; margin-top: 40px;
+  opacity: 0; animation: fadeUp .7s .8s forwards;
+}
+.btn {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 2px;
+  text-transform: uppercase; text-decoration: none;
+  padding: 14px 28px; border-radius: 4px;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: all .25s; cursor: none;
+}
+.btn-primary {
+  background: var(--accent); color: #000; border: none; font-weight: 600;
+}
+.btn-primary:hover { background: #00ffb3; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,160,.3); }
+.btn-ghost {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+.hero-scroll {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 10px; color: var(--muted);
+  letter-spacing: 3px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  animation: pulse 2s infinite;
+}
+.scroll-line { width: 1px; height: 40px; background: linear-gradient(var(--accent), transparent); }
+
+/* ── SECTION BASE ── */
+section { padding: 100px 10vw; position: relative; }
+.section-label {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 4px;
+  color: var(--accent); text-transform: uppercase; margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 800;
+  line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 48px;
+}
+
+/* ── SKILLS ── */
+#skills { background: var(--bg2); }
+.skills-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;
+}
+.skill-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 12px; padding: 28px;
+  transition: all .3s; position: relative; overflow: hidden;
+}
+.skill-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  transform: scaleX(0); transform-origin: left; transition: transform .3s;
+}
+.skill-card:hover { border-color: rgba(0,229,160,.2); transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,.4); }
+.skill-card:hover::before { transform: scaleX(1); }
+.skill-icon { font-size: 28px; margin-bottom: 14px; }
+.skill-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.skill-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 18px; }
+.skill-bar-wrap { background: rgba(255,255,255,.06); border-radius: 2px; height: 3px; }
+.skill-bar {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), #00b37e);
+  transition: width 1.5s cubic-bezier(.16,1,.3,1);
+}
+.skill-pct { font-family: var(--mono); font-size: 11px; color: var(--accent); text-align: right; margin-top: 6px; }
+
+/* ── PROJECTS / NOTEBOOKS ── */
+#notebooks { background: var(--bg); }
+.notebooks-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 28px;
+}
+.nb-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+  transition: all .3s; position: relative;
+}
+.nb-card:hover { transform: translateY(-6px); border-color: rgba(59,130,246,.3); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+.nb-header {
+  padding: 22px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.nb-dots { display: flex; gap: 5px; }
+.nb-dot { width: 10px; height: 10px; border-radius: 50%; }
+.nb-badge {
+  margin-left: auto; font-family: var(--mono); font-size: 10px;
+  padding: 3px 10px; border-radius: 2px; letter-spacing: 1px;
+}
+.nb-body { padding: 24px; }
+.nb-number { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; }
+.nb-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+.nb-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; }
+.nb-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+.nb-tag {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 1px;
+  padding: 3px 9px; border-radius: 3px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--border);
+  color: var(--muted);
+}
+.nb-sections { display: flex; flex-direction: column; gap: 6px; }
+.nb-section {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--muted);
+}
+.nb-section::before { content: '›'; color: var(--accent); font-size: 14px; }
+
+/* ── CODE PREVIEW ── */
+#code { background: var(--bg2); }
+.code-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 0; overflow-x: auto; }
+.code-tab {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 1px;
+  padding: 12px 20px; cursor: pointer;
+  color: var(--muted); border-bottom: 2px solid transparent;
+  transition: all .2s; white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none;
+}
+.code-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.code-panel {
+  background: #020810; border: 1px solid var(--border); border-top: none;
+  border-radius: 0 0 10px 10px; padding: 28px;
+  font-family: var(--mono); font-size: 13px; line-height: 1.8;
+  overflow-x: auto; display: none;
+}
+.code-panel.active { display: block; }
+.c-kw   { color: #c792ea; }
+.c-fn   { color: #82aaff; }
+.c-str  { color: #c3e88d; }
+.c-num  { color: #f78c6c; }
+.c-cm   { color: #546e7a; font-style: italic; }
+.c-acc  { color: var(--accent); }
+.c-cls  { color: #ffcb6b; }
+.code-out {
+  margin-top: 16px; padding: 16px;
+  background: rgba(0,229,160,.04); border: 1px solid rgba(0,229,160,.15);
+  border-radius: 6px;
+}
+.out-label { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
+.out-text { font-family: var(--mono); font-size: 12px; color: #a7f3d0; line-height: 1.7; }
+
+/* ── METRICS ── */
+#metrics { background: var(--bg); }
+.metrics-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;
+  margin-bottom: 60px;
+}
+.metric-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 28px 24px; text-align: center;
+  transition: all .3s;
+}
+.metric-card:hover { border-color: rgba(0,229,160,.25); transform: scale(1.02); }
+.metric-val {
+  font-size: 2.8rem; font-weight: 800; line-height: 1;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--accent), #3b82f6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.metric-lbl { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 2px; }
+
+/* ── PIPELINE ── */
+.pipeline {
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; padding: 20px 0; margin-top: 20px;
+}
+.pipe-step {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; min-width: 110px;
+}
+.pipe-icon {
+  width: 56px; height: 56px; border-radius: 12px;
+  background: var(--bg2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  transition: all .3s;
+}
+.pipe-step:hover .pipe-icon { border-color: var(--accent); background: rgba(0,229,160,.08); transform: scale(1.1); }
+.pipe-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 1px; text-align: center; }
+.pipe-arrow {
+  color: var(--muted); font-size: 18px; padding: 0 6px;
+  flex-shrink: 0; margin-bottom: 20px;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg2); border-top: 1px solid var(--border);
+  padding: 60px 10vw; display: flex;
+  justify-content: space-between; align-items: center; flex-wrap: gap;
+}
+.footer-left .logo { font-family: var(--mono); font-size: 13px; color: var(--accent); margin-bottom: 8px; }
+.footer-left p { font-size: 13px; color: var(--muted); }
+.footer-right { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; }
+.footer-right span { color: var(--accent); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%,100% { opacity: .4; } 50% { opacity: 1; }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); }
+}
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Mobile */
+@media (max-width: 768px) {
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  section { padding: 80px 6vw; }
+  .pipeline { flex-wrap: wrap; justify-content: center; }
+  footer { flex-direction: column; gap: 24px; text-align: center; }
+  .footer-right { text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">⬡ DS·PORTFOLIO</div>
+  <div class="nav-links">
+    <a href="#skills">Skills</a>
+    <a href="#notebooks">Notebooks</a>
+    <a href="#code">Código</a>
+    <a href="#metrics">Métricas</a>
+    <a href="#open-notebooks" style="color:var(--accent)">▶ Abrir</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-tag">// Data Science Portfolio</div>
+  <h1>Python<br><span>Data</span><br>Science</h1>
+  <p class="hero-desc">
+    Análisis exploratorio, limpieza de datos, machine learning predictivo y 
+    forecasting de series de tiempo — demostrado con datasets reales.
+  </p>
+
+  <div class="hero-chips">
+    <span class="chip accent">🐍 Python 3.11</span>
+    <span class="chip">Pandas</span>
+    <span class="chip">NumPy</span>
+    <span class="chip">Scikit-learn</span>
+    <span class="chip">Seaborn</span>
+    <span class="chip">Prophet</span>
+    <span class="chip">mlxtend</span>
+    <span class="chip">Matplotlib</span>
+    <span class="chip">SciPy</span>
+  </div>
+
+  <div class="hero-cta">
+    <a href="#notebooks" class="btn btn-primary">Ver Notebooks →</a>
+    <a href="#code" class="btn btn-ghost">Ver Código</a>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    SCROLL
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="reveal">
+    <div class="section-label">// 01 · Habilidades</div>
+    <h2 class="section-title">Stack Técnico</h2>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card reveal" style="transition-delay:.05s">
+      <div class="skill-icon">🧹</div>
+      <div class="skill-name">Data Cleaning & Wrangling</div>
+      <div class="skill-desc">Manejo de nulos, duplicados, outliers, conversión de tipos y validación cruzada con Pandas.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-w="95" style="width:0"></div></div>
+      <div class="skill-pct">95%</div>
+    </div>
+    <div class="skill-card reveal" style="transition-delay:.1s">
+      <div class="skill-icon">🔍</div>
+      <div class="skill-name">Exploratory Data Analysis</div>
+      <div class="skill-desc">Estadística descriptiva, correlaciones Pearson/Spearman, análisis temporal y segmentación.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-w="92" style="width:0"></div></div>
+      <div class="skill-pct">92%</div>
+    </div>
+    <div class="skill-card reveal" style="transition-delay:.15s">
+      <div class="skill-icon">📊</div>
+      <div class="skill-name">Visualización de Datos</div>
+      <div class="skill-desc">Seaborn, Matplotlib, Plotly. Dashboards multi-panel, heatmaps, series temporales y distribuciones.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-w="90" style="width:0"></div></div>
+      <div class="skill-pct">90%</div>
+    </div>
+    <div class="skill-card reveal" style="transition-delay:.2s">
+      <div class="skill-icon">🤖</div>
+      <div class="skill-name">Machine Learning</div>
+      <div class="skill-desc">Regresión, Random Forest, Gradient Boosting. Pipelines scikit-learn, cross-validation, feature importance.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-w="85" style="width:0"></div></div>
+      <div class="skill-pct">85%</div>
+    </div>
+    <div class="skill-card reveal" style="transition-delay:.25s">
+      <div class="skill-icon">🛒</div>
+      <div class="skill-name">Market Basket Analysis</div>
+      <div class="skill-desc">Algoritmo Apriori, reglas de asociación (support, confidence, lift) y sistemas de recomendación.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-w="82" style="width:0"></div></div>
+      <div class="skill-pct">82%</div>
+    </div>
+    <div class="skill-card reveal" style="transition-delay:.3s">
+      <div class="skill-icon">📈</div>
+      <div class="skill-name">Time Series & Forecasting</div>
+      <div class="skill-desc">Prophet de Meta. Componentes de tendencia, estacionalidad, backtesting y pronóstico con intervalos de confianza.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-w="80" style="width:0"></div></div>
+      <div class="skill-pct">80%</div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section style="background:var(--bg); padding: 0 10vw 80px;">
+  <div class="reveal">
+    <div class="section-label">// Pipeline</div>
+    <h2 class="section-title" style="font-size:1.8rem; margin-bottom:24px;">Flujo de Trabajo Data Science</h2>
+  </div>
+  <div class="pipeline reveal">
+    <div class="pipe-step"><div class="pipe-icon">📥</div><div class="pipe-label">Ingesta</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-icon">🧹</div><div class="pipe-label">Limpieza</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-icon">🔍</div><div class="pipe-label">EDA</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-icon">⚙️</div><div class="pipe-label">Feature Eng.</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-icon">🤖</div><div class="pipe-label">Modelado</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-icon">📊</div><div class="pipe-label">Evaluación</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><div class="pipe-icon">🚀</div><div class="pipe-label">Deploy</div></div>
+  </div>
+</section>
+
+<!-- NOTEBOOKS -->
+<section id="notebooks" style="background:var(--bg2);">
+  <div class="reveal">
+    <div class="section-label">// 02 · Proyectos</div>
+    <h2 class="section-title">Notebooks</h2>
+  </div>
+  <div class="notebooks-grid">
+
+    <!-- NB 1 -->
+    <div class="nb-card reveal">
+      <div class="nb-header">
+        <div class="nb-dots">
+          <div class="nb-dot" style="background:#ef4444"></div>
+          <div class="nb-dot" style="background:#f59e0b"></div>
+          <div class="nb-dot" style="background:#22c55e"></div>
+        </div>
+        <div class="nb-badge" style="background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.2)">ANÁLISIS COMPLETO</div>
+      </div>
+      <div class="nb-body">
+        <div class="nb-number">NB — 01</div>
+        <div class="nb-title">Supermarket Sales — EDA & ML</div>
+        <div class="nb-desc">Análisis completo de 1,000 transacciones: limpieza, EDA, correlaciones, outliers, feature engineering y 3 modelos de ML comparados.</div>
+        <div class="nb-tags">
+          <span class="nb-tag">pandas</span>
+          <span class="nb-tag">seaborn</span>
+          <span class="nb-tag">sklearn</span>
+          <span class="nb-tag">scipy</span>
+          <span class="nb-tag">matplotlib</span>
+        </div>
+        <div class="nb-sections">
+          <div class="nb-section">Carga y exploración inicial</div>
+          <div class="nb-section">Limpieza y validación de datos</div>
+          <div class="nb-section">EDA: temporal, por sucursal, producto</div>
+          <div class="nb-section">Correlaciones Pearson / Spearman</div>
+          <div class="nb-section">Detección de outliers (IQR)</div>
+          <div class="nb-section">Feature Engineering + ML Pipeline</div>
+          <div class="nb-section">Dashboard ejecutivo final</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NB 2 -->
+    <div class="nb-card reveal" style="transition-delay:.12s">
+      <div class="nb-header">
+        <div class="nb-dots">
+          <div class="nb-dot" style="background:#ef4444"></div>
+          <div class="nb-dot" style="background:#f59e0b"></div>
+          <div class="nb-dot" style="background:#22c55e"></div>
+        </div>
+        <div class="nb-badge" style="background:rgba(0,229,160,.1);color:var(--accent);border:1px solid rgba(0,229,160,.2)">AVANZADO</div>
+      </div>
+      <div class="nb-body">
+        <div class="nb-number">NB — 02</div>
+        <div class="nb-title">Market Basket + Forecasting</div>
+        <div class="nb-desc">Minería de reglas de asociación con Apriori para generar recomendaciones tipo Amazon, más predicción de ventas a 45 días con Prophet.</div>
+        <div class="nb-tags">
+          <span class="nb-tag">mlxtend</span>
+          <span class="nb-tag">apriori</span>
+          <span class="nb-tag">prophet</span>
+          <span class="nb-tag">association_rules</span>
+        </div>
+        <div class="nb-sections">
+          <div class="nb-section">Encoder transaccional (basket matrix)</div>
+          <div class="nb-section">Apriori — itemsets frecuentes</div>
+          <div class="nb-section">Reglas: support, confidence, lift</div>
+          <div class="nb-section">Sistema de recomendación en vivo</div>
+          <div class="nb-section">Forecasting Prophet — 45 días</div>
+          <div class="nb-section">Cross-validation + métricas (MAPE)</div>
+          <div class="nb-section">Pronóstico tabla 30 días</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NB 3: Tienda -->
+    <div class="nb-card reveal" style="transition-delay:.24s">
+      <div class="nb-header">
+        <div class="nb-dots">
+          <div class="nb-dot" style="background:#ef4444"></div>
+          <div class="nb-dot" style="background:#f59e0b"></div>
+          <div class="nb-dot" style="background:#22c55e"></div>
+        </div>
+        <div class="nb-badge" style="background:rgba(245,158,11,.1);color:#fcd34d;border:1px solid rgba(245,158,11,.2)">COLOMBIANO 🇨🇴</div>
+      </div>
+      <div class="nb-body">
+        <div class="nb-number">NB — 03</div>
+        <div class="nb-title">Catálogo Tienda POS Colombia</div>
+        <div class="nb-desc">Dataset de 310 productos reales del mercado colombiano con EAN-13 válidos, precios COP, IVA por categoría y márgenes de ganancia reales.</div>
+        <div class="nb-tags">
+          <span class="nb-tag">json</span>
+          <span class="nb-tag">EAN-13</span>
+          <span class="nb-tag">23 categorías</span>
+          <span class="nb-tag">COP</span>
+          <span class="nb-tag">310 SKUs</span>
+        </div>
+        <div class="nb-sections">
+          <div class="nb-section">Alquería, Alpina, Colanta, Zenú, Noel</div>
+          <div class="nb-section">Bebidas, Lácteos, Granos, Carnes</div>
+          <div class="nb-section">Aseo personal y del hogar</div>
+          <div class="nb-section">IVA 0%, 5% y 19% por categoría</div>
+          <div class="nb-section">Precio compra + precio venta (margen)</div>
+          <div class="nb-section">Stock y stock mínimo por producto</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CODE PREVIEW -->
+<section id="code">
+  <div class="reveal">
+    <div class="section-label">// 03 · Código</div>
+    <h2 class="section-title">Ejemplos Clave</h2>
+  </div>
+  <div class="reveal">
+    <div class="code-tabs">
+      <button class="code-tab active" onclick="showTab('limpieza')">🧹 Limpieza</button>
+      <button class="code-tab" onclick="showTab('eda')">🔍 EDA</button>
+      <button class="code-tab" onclick="showTab('basket')">🛒 Basket</button>
+      <button class="code-tab" onclick="showTab('prophet')">📈 Prophet</button>
+      <button class="code-tab" onclick="showTab('pipeline')">⚙️ Pipeline</button>
+    </div>
+
+    <div id="tab-limpieza" class="code-panel active">
+<pre><span class="c-cm"># ── Limpieza profesional de datos ────────────────────────────</span>
+<span class="c-kw">import</span> pandas <span class="c-kw">as</span> <span class="c-acc">pd</span>
+<span class="c-kw">import</span> numpy <span class="c-kw">as</span> <span class="c-acc">np</span>
+
+<span class="c-cm"># 1. Cargar y auditar</span>
+df = <span class="c-acc">pd</span>.<span class="c-fn">read_csv</span>(<span class="c-str">'supermarket_sales.csv'</span>)
+nulos = df.<span class="c-fn">isnull</span>().<span class="c-fn">sum</span>()
+
+<span class="c-cm"># 2. Eliminar duplicados — crítico antes de cualquier análisis</span>
+df = df.<span class="c-fn">drop_duplicates</span>()
+
+<span class="c-cm"># 3. Convertir fechas — habilita análisis temporal completo</span>
+df[<span class="c-str">'datetime'</span>] = <span class="c-acc">pd</span>.<span class="c-fn">to_datetime</span>(df[<span class="c-str">'Date'</span>] + <span class="c-str">' '</span> + df[<span class="c-str">'Time'</span>])
+df[<span class="c-str">'hour'</span>]     = df[<span class="c-str">'datetime'</span>].dt.hour
+df[<span class="c-str">'dow'</span>]      = df[<span class="c-str">'datetime'</span>].dt.dayofweek
+
+<span class="c-cm"># 4. Validar consistencia: Total = cogs + Tax 5%</span>
+df[<span class="c-str">'check'</span>] = (df[<span class="c-str">'cogs'</span>] + df[<span class="c-str">'Tax 5%'</span>]).<span class="c-fn">round</span>(<span class="c-num">2</span>)
+<span class="c-fn">assert</span> (df[<span class="c-str">'check'</span>] == df[<span class="c-str">'Total'</span>].<span class="c-fn">round</span>(<span class="c-num">2</span>)).<span class="c-fn">all</span>(), <span class="c-str">"⚠️ Inconsistencia!"</span></pre>
+      <div class="code-out">
+        <div class="out-label">▶ OUTPUT</div>
+        <div class="out-text">✅ Dataset: 1,000 filas × 17 columnas
+Nulos encontrados: 0
+Duplicados eliminados: 0
+✅ Validación Total: sin inconsistencias</div>
+      </div>
+    </div>
+
+    <div id="tab-eda" class="code-panel">
+<pre><span class="c-cm"># ── EDA: Correlaciones + p-values ──────────────────────────</span>
+<span class="c-kw">from</span> scipy <span class="c-kw">import</span> stats
+
+<span class="c-cm"># Correlación de Spearman (robusta a outliers)</span>
+corr = df[cols].<span class="c-fn">corr</span>(method=<span class="c-str">'spearman'</span>)
+
+<span class="c-cm"># Test de Pearson con significancia estadística</span>
+<span class="c-kw">for</span> col <span class="c-kw">in</span> [<span class="c-str">'Unit price'</span>, <span class="c-str">'Quantity'</span>, <span class="c-str">'Rating'</span>]:
+    r, p = stats.<span class="c-fn">pearsonr</span>(df[col], df[<span class="c-str">'Total'</span>])
+    sig = <span class="c-str">'✅'</span> <span class="c-kw">if</span> p &lt; <span class="c-num">0.05</span> <span class="c-kw">else</span> <span class="c-str">'❌'</span>
+    <span class="c-fn">print</span>(<span class="c-str">f"{col}: r={r:.3f}, p={p:.4f} {sig}"</span>)
+
+<span class="c-cm"># Pivot table: ventas por línea × sucursal</span>
+pivot = df.<span class="c-fn">pivot_table</span>(
+    values=<span class="c-str">'Total'</span>, index=<span class="c-str">'Product line'</span>,
+    columns=<span class="c-str">'Branch'</span>, aggfunc=<span class="c-str">'sum'</span>, margins=<span class="c-cls">True</span>
+)</pre>
+      <div class="code-out">
+        <div class="out-label">▶ OUTPUT</div>
+        <div class="out-text">Unit price: r=0.637, p=0.0000 ✅ (alta correlación)
+Quantity:   r=0.706, p=0.0000 ✅ (alta correlación)
+Rating:     r=0.002, p=0.8341 ❌ (no significativa)
+💡 Rating no predice el gasto — insight importante!</div>
+      </div>
+    </div>
+
+    <div id="tab-basket" class="code-panel">
+<pre><span class="c-cm"># ── Market Basket Analysis con Apriori ─────────────────────</span>
+<span class="c-kw">from</span> mlxtend.frequent_patterns <span class="c-kw">import</span> apriori, association_rules
+<span class="c-kw">from</span> mlxtend.preprocessing   <span class="c-kw">import</span> <span class="c-cls">TransactionEncoder</span>
+
+<span class="c-cm"># 1. Transformar a basket matrix (one-hot)</span>
+te       = <span class="c-cls">TransactionEncoder</span>()
+df_b     = <span class="c-acc">pd</span>.<span class="c-cls">DataFrame</span>(te.<span class="c-fn">fit_transform</span>(canastas), columns=te.columns_)
+
+<span class="c-cm"># 2. Itemsets frecuentes (min 8% de transacciones)</span>
+freq     = <span class="c-fn">apriori</span>(df_b, min_support=<span class="c-num">0.08</span>, use_colnames=<span class="c-cls">True</span>)
+
+<span class="c-cm"># 3. Reglas con lift > 1.5 y confidence > 50%</span>
+rules    = <span class="c-fn">association_rules</span>(freq, metric=<span class="c-str">'lift'</span>, min_threshold=<span class="c-num">1.5</span>)
+rules    = rules[rules[<span class="c-str">'confidence'</span>] >= <span class="c-num">0.5</span>]
+
+<span class="c-cm"># 4. Recomendador en tiempo real</span>
+<span class="c-kw">def</span> <span class="c-fn">recomendar</span>(carrito, rules, n=<span class="c-num">5</span>):
+    c = <span class="c-fn">frozenset</span>(carrito)
+    <span class="c-kw">return</span> rules[rules[<span class="c-str">'antecedents'</span>].<span class="c-fn">apply</span>(<span class="c-kw">lambda</span> x: x.<span class="c-fn">issubset</span>(c))]</pre>
+      <div class="code-out">
+        <div class="out-label">▶ OUTPUT</div>
+        <div class="out-text">🛒 Carrito: [Leche, Pan tajado]
+✨ Café            conf=0.81, lift=2.34
+✨ Mantequilla     conf=0.74, lift=2.18
+✨ Huevos          conf=0.62, lift=1.98</div>
+      </div>
+    </div>
+
+    <div id="tab-prophet" class="code-panel">
+<pre><span class="c-cm"># ── Forecasting con Prophet (Meta) ──────────────────────────</span>
+<span class="c-kw">from</span> prophet <span class="c-kw">import</span> <span class="c-cls">Prophet</span>
+<span class="c-kw">from</span> prophet.diagnostics <span class="c-kw">import</span> cross_validation, performance_metrics
+
+<span class="c-cm"># Prophet requiere columnas 'ds' (fecha) y 'y' (valor)</span>
+df_ts = ventas.<span class="c-fn">rename</span>(columns={<span class="c-str">'fecha'</span>:<span class="c-str">'ds'</span>, <span class="c-str">'total'</span>:<span class="c-str">'y'</span>})
+
+<span class="c-cm"># Configurar modelo con estacionalidades</span>
+m = <span class="c-cls">Prophet</span>(
+    changepoint_prior_scale=<span class="c-num">0.3</span>,
+    seasonality_mode=<span class="c-str">'additive'</span>,
+    interval_width=<span class="c-num">0.95</span>         <span class="c-cm"># IC 95%</span>
+)
+m.<span class="c-fn">add_seasonality</span>(name=<span class="c-str">'monthly'</span>, period=<span class="c-num">30.5</span>, fourier_order=<span class="c-num">5</span>)
+m.<span class="c-fn">fit</span>(df_ts)
+
+<span class="c-cm"># Predecir 45 días al futuro</span>
+futuro   = m.<span class="c-fn">make_future_dataframe</span>(periods=<span class="c-num">45</span>)
+forecast = m.<span class="c-fn">predict</span>(futuro)</pre>
+      <div class="code-out">
+        <div class="out-label">▶ OUTPUT</div>
+        <div class="out-text">✅ Prophet entrenado: 90 días histórico
+📅 Pronóstico generado: 135 filas totales
+MAE:  $3,240 | RMSE: $4,180 | MAPE: 12.4%
+Cobertura IC 95%: 94.8% ✅</div>
+      </div>
+    </div>
+
+    <div id="tab-pipeline" class="code-panel">
+<pre><span class="c-cm"># ── Pipeline ML profesional (sin data leakage) ──────────────</span>
+<span class="c-kw">from</span> sklearn.pipeline       <span class="c-kw">import</span> <span class="c-cls">Pipeline</span>
+<span class="c-kw">from</span> sklearn.preprocessing  <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span>
+<span class="c-kw">from</span> sklearn.ensemble       <span class="c-kw">import</span> <span class="c-cls">GradientBoostingRegressor</span>
+<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> cross_val_score
+
+<span class="c-cm"># Pipeline encapsula scaler + modelo — clave para evitar
+# data leakage (el scaler se ajusta SOLO con train data)</span>
+pipeline = <span class="c-cls">Pipeline</span>([
+    (<span class="c-str">'scaler'</span>, <span class="c-cls">StandardScaler</span>()),
+    (<span class="c-str">'model'</span>,  <span class="c-cls">GradientBoostingRegressor</span>(
+        n_estimators=<span class="c-num">200</span>, learning_rate=<span class="c-num">0.05</span>,
+        max_depth=<span class="c-num">4</span>,  random_state=<span class="c-num">42</span>
+    ))
+])
+
+<span class="c-cm"># Cross-validation 5-fold: más confiable que un solo split</span>
+cv = <span class="c-fn">cross_val_score</span>(pipeline, X, y, cv=<span class="c-num">5</span>, scoring=<span class="c-str">'r2'</span>, n_jobs=-<span class="c-num">1</span>)
+<span class="c-fn">print</span>(<span class="c-str">f"CV R²: {cv.mean():.4f} ± {cv.std():.4f}"</span>)</pre>
+      <div class="code-out">
+        <div class="out-label">▶ OUTPUT</div>
+        <div class="out-text">✅ GradientBoosting entrenado
+CV R²:  0.9921 ± 0.0024
+MAE:    $1.82
+MAPE:   6.14%
+Top feature: Unit price (0.412)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section id="metrics" style="background:var(--bg2);">
+  <div class="reveal">
+    <div class="section-label">// 04 · Resultados</div>
+    <h2 class="section-title">Métricas del Proyecto</h2>
+  </div>
+  <div class="metrics-grid reveal">
+    <div class="metric-card">
+      <div class="metric-val">1,310</div>
+      <div class="metric-lbl">Registros Analizados</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">99.2%</div>
+      <div class="metric-lbl">R² Modelo ML</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">12.4%</div>
+      <div class="metric-lbl">MAPE Forecasting</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">2.3×</div>
+      <div class="metric-lbl">Lift Máximo (Basket)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">310</div>
+      <div class="metric-lbl">Productos Col. 🇨🇴</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">45d</div>
+      <div class="metric-lbl">Horizonte Forecast</div>
+    </div>
+  </div>
+
+  <!-- Modelos comparados -->
+  <div class="reveal">
+    <div class="section-label" style="margin-bottom:16px;">// Comparación de Modelos</div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px;">
+        <thead>
+          <tr style="background:rgba(0,229,160,.06);border-bottom:1px solid var(--border);">
+            <th style="padding:14px 20px;text-align:left;color:var(--accent);font-weight:600;">Modelo</th>
+            <th style="padding:14px;text-align:right;color:var(--muted);">MAE</th>
+            <th style="padding:14px;text-align:right;color:var(--muted);">R²</th>
+            <th style="padding:14px;text-align:right;color:var(--muted);">MAPE</th>
+            <th style="padding:14px 20px;text-align:right;color:var(--muted);">CV R²</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 20px;">Regresión Lineal</td>
+            <td style="padding:12px;text-align:right;color:var(--muted);">$3.42</td>
+            <td style="padding:12px;text-align:right;color:var(--muted);">0.9803</td>
+            <td style="padding:12px;text-align:right;color:var(--muted);">8.9%</td>
+            <td style="padding:12px 20px;text-align:right;color:var(--muted);">0.9799</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:12px 20px;">Random Forest</td>
+            <td style="padding:12px;text-align:right;color:var(--muted);">$2.14</td>
+            <td style="padding:12px;text-align:right;color:var(--muted);">0.9910</td>
+            <td style="padding:12px;text-align:right;color:var(--muted);">7.1%</td>
+            <td style="padding:12px 20px;text-align:right;color:var(--muted);">0.9897</td>
+          </tr>
+          <tr style="background:rgba(0,229,160,.04);">
+            <td style="padding:12px 20px;color:var(--accent);font-weight:600;">🏆 Gradient Boosting</td>
+            <td style="padding:12px;text-align:right;color:var(--accent);font-weight:600;">$1.82</td>
+            <td style="padding:12px;text-align:right;color:var(--accent);font-weight:600;">0.9921</td>
+            <td style="padding:12px;text-align:right;color:var(--accent);font-weight:600;">6.1%</td>
+            <td style="padding:12px 20px;text-align:right;color:var(--accent);font-weight:600;">0.9921</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- NOTEBOOKS EXTERNOS -->
+<section id="open-notebooks" style="background:var(--bg3, #111827); padding:80px 10vw;">
+  <div class="reveal">
+    <div class="section-label">// 05 · Abrir Notebooks</div>
+    <h2 class="section-title">Ejecuta los Análisis</h2>
+    <p style="color:var(--muted);font-size:14px;margin-top:-32px;margin-bottom:48px;max-width:600px;line-height:1.7;">
+      Puedes ejecutar cada notebook directamente en la nube — sin instalar nada.
+      Elige tu plataforma favorita.
+    </p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:28px;">
+
+    <!-- NB1 -->
+    <div class="reveal nb-card" style="border-color:rgba(59,130,246,.2)">
+      <div class="nb-header" style="background:rgba(59,130,246,.08)">
+        <div class="nb-dots">
+          <div class="nb-dot" style="background:#ef4444"></div>
+          <div class="nb-dot" style="background:#f59e0b"></div>
+          <div class="nb-dot" style="background:#22c55e"></div>
+        </div>
+        <span style="font-family:var(--mono);font-size:11px;color:#93c5fd;margin-left:auto">NB — 01</span>
+      </div>
+      <div class="nb-body">
+        <div class="nb-title" style="margin-bottom:6px">📊 Supermarket Sales — EDA & ML</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">
+          Limpieza · EDA · Correlaciones · Outliers · Feature Eng · 3 Modelos ML · Dashboard
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <a href="https://colab.research.google.com/github/Julio-Cesar-Ceballos/Mi-portafolio-DS/blob/main/supermarket_analysis.ipynb"
+             target="_blank" rel="noopener"
+             style="display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:8px;text-decoration:none;color:#fcd34d;font-family:var(--mono);font-size:12px;transition:all .2s"
+             onmouseover="this.style.background='rgba(245,158,11,.2)'"
+             onmouseout="this.style.background='rgba(245,158,11,.1)'">
+            <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Colab" style="height:20px"> Abrir en Google Colab
+          </a>
+          <a href="https://www.kaggle.com/code/new?scriptType=notebook"
+             target="_blank" rel="noopener"
+             style="display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(32,190,255,.08);border:1px solid rgba(32,190,255,.2);border-radius:8px;text-decoration:none;color:#67e8f9;font-family:var(--mono);font-size:12px;transition:all .2s"
+             onmouseover="this.style.background='rgba(32,190,255,.15)'"
+             onmouseout="this.style.background='rgba(32,190,255,.08)'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm4.441 16.892c-2.102.144-3.951-.96-5.88-3.156L8.332 16.05l-.666-5.51 5.51.668-2.265 2.265c1.515 1.83 2.973 2.766 4.394 2.67l1.136-.044v.793z" fill="#20BEFF"/></svg>
+            Abrir en Kaggle Notebooks
+          </a>
+          <a href="https://github.com/Julio-Cesar-Ceballos/Mi-portafolio-DS/blob/main/supermarket_analysis.ipynb"
+             target="_blank" rel="noopener"
+             style="display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;text-decoration:none;color:var(--muted);font-family:var(--mono);font-size:12px;transition:all .2s"
+             onmouseover="this.style.background='rgba(255,255,255,.08)'"
+             onmouseout="this.style.background='rgba(255,255,255,.04)'">
+            👁️ Vista previa en nbviewer
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- NB2 -->
+    <div class="reveal nb-card" style="border-color:rgba(0,229,160,.2);transition-delay:.12s">
+      <div class="nb-header" style="background:rgba(0,229,160,.06)">
+        <div class="nb-dots">
+          <div class="nb-dot" style="background:#ef4444"></div>
+          <div class="nb-dot" style="background:#f59e0b"></div>
+          <div class="nb-dot" style="background:#22c55e"></div>
+        </div>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--accent);margin-left:auto">NB — 02</span>
+      </div>
+      <div class="nb-body">
+        <div class="nb-title" style="margin-bottom:6px">🛒 Market Basket + 📈 Forecasting</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">
+          Apriori · Association Rules · Recommender System · Prophet · Cross-validation
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <a href="https://colab.research.google.com/github/Julio-Cesar-Ceballos/Mi-portafolio-DS/blob/main/advanced_analysis.ipynb"
+             target="_blank" rel="noopener"
+             style="display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:8px;text-decoration:none;color:#fcd34d;font-family:var(--mono);font-size:12px;transition:all .2s"
+             onmouseover="this.style.background='rgba(245,158,11,.2)'"
+             onmouseout="this.style.background='rgba(245,158,11,.1)'">
+            <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Colab" style="height:20px"> Abrir en Google Colab
+          </a>
+          <a href="https://www.kaggle.com/code/new?scriptType=notebook"
+             target="_blank" rel="noopener"
+             style="display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(32,190,255,.08);border:1px solid rgba(32,190,255,.2);border-radius:8px;text-decoration:none;color:#67e8f9;font-family:var(--mono);font-size:12px;transition:all .2s"
+             onmouseover="this.style.background='rgba(32,190,255,.15)'"
+             onmouseout="this.style.background='rgba(32,190,255,.08)'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm4.441 16.892c-2.102.144-3.951-.96-5.88-3.156L8.332 16.05l-.666-5.51 5.51.668-2.265 2.265c1.515 1.83 2.973 2.766 4.394 2.67l1.136-.044v.793z" fill="#20BEFF"/></svg>
+            Abrir en Kaggle Notebooks
+          </a>
+          <a href="https://github.com/Julio-Cesar-Ceballos/Mi-portafolio-DS/blob/main/advanced_analysis.ipynb"
+             target="_blank" rel="noopener"
+             style="display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;text-decoration:none;color:var(--muted);font-family:var(--mono);font-size:12px;transition:all .2s"
+             onmouseover="this.style.background='rgba(255,255,255,.08)'"
+             onmouseout="this.style.background='rgba(255,255,255,.04)'">
+            👁️ Vista previa en nbviewer
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dataset Kaggle -->
+    <div class="reveal nb-card" style="border-color:rgba(245,158,11,.2);transition-delay:.24s">
+      <div class="nb-header" style="background:rgba(245,158,11,.06)">
+        <div class="nb-dots">
+          <div class="nb-dot" style="background:#ef4444"></div>
+          <div class="nb-dot" style="background:#f59e0b"></div>
+          <div class="nb-dot" style="background:#22c55e"></div>
+        </div>
+        <span style="font-family:var(--mono);font-size:11px;color:#fcd34d;margin-left:auto">DATASET</span>
+      </div>
+      <div class="nb-body">
+        <div class="nb-title" style="margin-bottom:6px">📦 Dataset & Recursos</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">
+          Descarga los datos directamente desde Kaggle o GitHub para correr el análisis completo.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <a href="https://www.kaggle.com/datasets/aungpyaeap/supermarket-sales"
+             target="_blank" rel="noopener"
+             style="display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(32,190,255,.08);border:1px solid rgba(32,190,255,.2);border-radius:8px;text-decoration:none;color:#67e8f9;font-family:var(--mono);font-size:12px;transition:all .2s"
+             onmouseover="this.style.background='rgba(32,190,255,.15)'"
+             onmouseout="this.style.background='rgba(32,190,255,.08)'">
+            🗂️ Supermarket Sales — Kaggle (CC0)
+          </a>
+          <a href="https://github.com/Julio-Cesar-Ceballos/Mi-portafolio-DS"
+             target="_blank" rel="noopener"
+             style="display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;text-decoration:none;color:var(--text);font-family:var(--mono);font-size:12px;transition:all .2s"
+             onmouseover="this.style.background='rgba(255,255,255,.09)'"
+             onmouseout="this.style.background='rgba(255,255,255,.04)'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" opacity=".7"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            Ver código en GitHub
+          </a>
+          <a href="https://pandas.pydata.org/docs/" target="_blank" rel="noopener"
+             style="display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;text-decoration:none;color:var(--muted);font-family:var(--mono);font-size:12px;transition:all .2s"
+             onmouseover="this.style.background='rgba(255,255,255,.08)'"
+             onmouseout="this.style.background='rgba(255,255,255,.04)'">
+            📚 Documentación Pandas / Scikit-learn
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="logo">⬡ DS·PORTFOLIO</div>
+    <p>Data Science · Python · Machine Learning</p>
+  </div>
+  <div class="footer-right">
+    <div>Notebooks disponibles en</div>
+    <div><span>Jupyter · Kaggle · Google Colab</span></div>
+    <div style="margin-top:8px;font-size:10px;">Dataset: Supermarket Sales · Kaggle CC0</div>
+  </div>
+</footer>
+
+<script>
+// ── Custom cursor ──────────────────────────────────────
+const cursor     = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+let mx=0, my=0, rx=0, ry=0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx+'px';
+  cursor.style.top  = my+'px';
+});
+function animRing() {
+  rx += (mx-rx)*.12;
+  ry += (my-ry)*.12;
+  cursorRing.style.left = rx+'px';
+  cursorRing.style.top  = ry+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+document.querySelectorAll('a,button,.skill-card,.nb-card,.metric-card').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.width = '18px'; cursor.style.height = '18px';
+    cursorRing.style.width = '54px'; cursorRing.style.height = '54px';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.width = '10px'; cursor.style.height = '10px';
+    cursorRing.style.width = '36px'; cursorRing.style.height = '36px';
+  });
+});
+
+// ── Tabs ──────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── Reveal on scroll ──────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // Animar barras de skills cuando entran en vista
+      e.target.querySelectorAll('.skill-bar').forEach(bar => {
+        bar.style.width = bar.dataset.w + '%';
+      });
+    }
+  });
+}, { threshold: .12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Skill bars al cargar también ──────────────────────
+// (por si ya están visibles al inicio)
+setTimeout(() => {
+  document.querySelectorAll('.skill-card.visible .skill-bar').forEach(bar => {
+    bar.style.width = bar.dataset.w + '%';
+  });
+}, 500);
+</script>
+</body>
+</html>
